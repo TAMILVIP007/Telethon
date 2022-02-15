@@ -281,8 +281,10 @@ class DownloadMethods:
                     progress_callback=None,
                 )
 
-            for attr in ("username", "first_name", "title"):
-                possible_names.append(getattr(entity, attr, None))
+            possible_names.extend(
+                getattr(entity, attr, None)
+                for attr in ("username", "first_name", "title")
+            )
 
             photo = entity.photo
 
@@ -311,18 +313,17 @@ class DownloadMethods:
             # The fix seems to be using the full channel chat photo.
             ie = await self.get_input_entity(entity)
             ty = helpers._entity_type(ie)
-            if ty == helpers._EntityType.CHANNEL:
-                full = await self(functions.channels.GetFullChannelRequest(ie))
-                return await self._download_photo(
-                    full.full_chat.chat_photo,
-                    file,
-                    date=None,
-                    progress_callback=None,
-                    thumb=thumb,
-                )
-            else:
+            if ty != helpers._EntityType.CHANNEL:
                 # Until there's a report for chats, no need to.
                 return None
+            full = await self(functions.channels.GetFullChannelRequest(ie))
+            return await self._download_photo(
+                full.full_chat.chat_photo,
+                file,
+                date=None,
+                progress_callback=None,
+                thumb=thumb,
+            )
 
     async def download_media(
         self: "TelegramClient",

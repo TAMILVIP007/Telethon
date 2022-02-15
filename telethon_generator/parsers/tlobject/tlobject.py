@@ -49,8 +49,7 @@ class TLObject:
                 WHITELISTED_MISMATCHING_IDS.get(layer, set())
 
             if self.fullname not in whitelist:
-                assert self.id == self.infer_id(),\
-                    'Invalid inferred ID for ' + repr(self)
+                assert self.id == self.infer_id(), f'Invalid inferred ID for {repr(self)}'
 
         self.class_name = snake_to_camel_case(
             self.name, suffix='Request' if self.is_function else '')
@@ -61,10 +60,7 @@ class TLObject:
     @property
     def innermost_result(self):
         index = self.result.find('<')
-        if index == -1:
-            return self.result
-        else:
-            return self.result[index + 1:-1]
+        return self.result if index == -1 else self.result[index + 1:-1]
 
     def sorted_args(self):
         """Returns the arguments properly sorted and ready to plug-in

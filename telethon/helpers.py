@@ -30,8 +30,7 @@ def generate_random_long(signed=True):
 
 def ensure_parent_dir_exists(file_path):
     """Ensures that the parent directory exists"""
-    parent = os.path.dirname(file_path)
-    if parent:
+    if parent := os.path.dirname(file_path):
         os.makedirs(parent, exist_ok=True)
 
 
@@ -123,10 +122,7 @@ def retry_range(retries, force_retry=True):
 
 
 async def _maybe_await(value):
-    if inspect.isawaitable(value):
-        return await value
-    else:
-        return value
+    return await value if inspect.isawaitable(value) else value
 
 
 async def _cancel(log, **tasks):
