@@ -172,7 +172,7 @@ class _ParticipantsIter(RequestIter):
 
             users = {user.id: user for user in full.users}
             for chat in full.chats:
-                users.update({chat.id:chat})
+                users[chat.id] = chat
             for participant in full.full_chat.participants.participants:
                 if isinstance(participant, types.ChannelParticipantBanned):
                     peer = participant.peer
@@ -252,7 +252,7 @@ class _ParticipantsIter(RequestIter):
             self.requests[i].offset += len(participants.participants)
             users = {user.id: user for user in participants.users}
             for chat in participants.chats:
-                users.update({chat.id: chat})
+                users[chat.id] = chat
             for participant in participants.participants:
 
                 if isinstance(participant, types.ChannelParticipantBanned):
@@ -343,8 +343,9 @@ class _AdminLogIter(RequestIter):
             if not utils.is_list_like(admins):
                 admins = (admins,)
 
-            for admin in admins:
-                admin_list.append(await self.client.get_input_entity(admin))
+            admin_list.extend(
+                await self.client.get_input_entity(admin) for admin in admins
+            )
 
         self.request = functions.channels.GetAdminLogRequest(
             self.entity,

@@ -282,8 +282,7 @@ def _write_resolve(tlobject, builder):
             builder.end_block()
             builder.writeln('self.{} = _tmp', arg.name)
         else:
-            builder.writeln('self.{} = {}', arg.name,
-                          ac.format('self.' + arg.name))
+            builder.writeln('self.{} = {}', arg.name, ac.format(f'self.{arg.name}'))
 
         if arg.is_flag:
             builder.end_block()
@@ -367,7 +366,7 @@ def _write_from_reader(tlobject, builder):
     builder.writeln('@classmethod')
     builder.writeln('def from_reader(cls, reader):')
     for arg in tlobject.args:
-        _write_arg_read_code(builder, arg, tlobject, name='_' + arg.name)
+        _write_arg_read_code(builder, arg, tlobject, name=f'_{arg.name}')
 
     builder.writeln('return cls({})', ', '.join(
         '{0}=_{0}'.format(a.name) for a in tlobject.real_args))
@@ -631,7 +630,7 @@ def _write_arg_read_code(builder, arg, tlobject, name):
         if sep_index == -1:
             ns, t = '.', arg.type
         else:
-            ns, t = '.' + arg.type[:sep_index], arg.type[sep_index+1:]
+            ns, t = f'.{arg.type[:sep_index]}', arg.type[sep_index+1:]
         class_name = snake_to_camel_case(t)
 
         # There would be no need to import the type if we're in the

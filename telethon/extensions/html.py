@@ -110,8 +110,7 @@ class HTMLToTelegramParser(HTMLParser):
     def handle_data(self, text):
         previous_tag = self._open_tags[0] if len(self._open_tags) > 0 else ""
         if previous_tag == "a":
-            url = self._open_tags_meta[0]
-            if url:
+            if url := self._open_tags_meta[0]:
                 text = url
 
         for tag, entity in self._building_entities.items():
@@ -125,8 +124,7 @@ class HTMLToTelegramParser(HTMLParser):
             self._open_tags_meta.popleft()
         except IndexError:
             pass
-        entity = self._building_entities.pop(tag, None)
-        if entity:
+        if entity := self._building_entities.pop(tag, None):
             self.entities.append(entity)
 
 

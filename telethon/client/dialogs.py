@@ -135,10 +135,10 @@ class _DraftsIter(RequestIter):
             items = r.updates
         else:
             peers = []
-            for entity in entities:
-                peers.append(
-                    types.InputDialogPeer(await self.client.get_input_entity(entity))
-                )
+            peers.extend(
+                types.InputDialogPeer(await self.client.get_input_entity(entity))
+                for entity in entities
+            )
 
             r = await self.client(functions.messages.GetPeerDialogsRequest(peers))
             items = r.dialogs

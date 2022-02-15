@@ -61,23 +61,26 @@ class TLObject:
         else:
             result = []
             if isinstance(obj, dict):
-                result.append(obj.get("_", "dict"))
-                result.append("(")
+                result.extend((obj.get("_", "dict"), "("))
                 if obj:
                     result.append("\n")
                     indent += 1
                     for k, v in obj.items():
                         if k == "_":
                             continue
-                        result.append("\t" * indent)
-                        result.append(k)
-                        result.append("=")
-                        result.append(TLObject.pretty_format(v, indent))
-                        result.append(",\n")
+                        result.extend(
+                            (
+                                "\t" * indent,
+                                k,
+                                "=",
+                                TLObject.pretty_format(v, indent),
+                                ",\n",
+                            )
+                        )
+
                     result.pop()  # last ',\n'
                     indent -= 1
-                    result.append("\n")
-                    result.append("\t" * indent)
+                    result.extend(("\n", "\t" * indent))
                 result.append(")")
 
             elif isinstance(obj, (str, bytes)) or not hasattr(obj, "__iter__"):
@@ -87,13 +90,9 @@ class TLObject:
                 result.append("[\n")
                 indent += 1
                 for x in obj:
-                    result.append("\t" * indent)
-                    result.append(TLObject.pretty_format(x, indent))
-                    result.append(",\n")
+                    result.extend(("\t" * indent, TLObject.pretty_format(x, indent), ",\n"))
                 indent -= 1
-                result.append("\t" * indent)
-                result.append("]")
-
+                result.extend(("\t" * indent, "]"))
             return "".join(result)
 
     @staticmethod
@@ -127,9 +126,7 @@ class TLObject:
                     ]
                 )
             )
-        r.append(data)
-
-        r.append(bytes(padding))
+        r.extend((data, bytes(padding)))
         return b"".join(r)
 
     @staticmethod
